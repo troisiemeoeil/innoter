@@ -1,0 +1,4 @@
+git add .
+git commit -m ""
+git push helix main (for helix version) // git push origin main (for github version )
+git stash && git pull helix  main -X theirs && git stash pop (to pull and merge changes from helix, make sure to execute each command seperately )
