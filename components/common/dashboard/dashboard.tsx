@@ -10,7 +10,7 @@ import TimelineOverview from '../project-timeline-v2/Overview';
 import MapboxComponent from '../map/map';
 import { Team, teams } from "@/mock-data/teams";
 import { Button } from '@/components/ui/button';
-import { ArrowBigUp, ArrowBigUpIcon, ArrowUpRight } from 'lucide-react';
+import {  ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
@@ -95,7 +95,7 @@ export default function Dashboard() {
 
                      <SidebarTrigger className="relative mb-1" />
                      <Link href={`/${orgId}/site-overview`}>
-                        <Button className='flex hover:cursor-pointer  border-2 rounded-full hover:bg-accent text-black border-black bg-white dark:bg-accent-foreground p-0 m-0'>
+                        <Button className='flex hover:cursor-pointer   rounded-full hover:bg-accent text-black border-black bg-white dark:bg-accent-foreground p-0 m-0'>
                            
                            <ArrowUpRight />
                            </Button>
@@ -128,7 +128,7 @@ export default function Dashboard() {
                   <div style={{ width: '100%', height: '100vh' }}  className="overflow-hidden">
                      <div className='h-11  w-full flex  justify-end items-start'>
                        <Link href={`/${orgId}/module-logistics`}>
-                        <Button className='flex hover:cursor-pointer  border-2 rounded-full hover:bg-accent text-black border-black bg-white dark:bg-accent-foreground p-0 m-0'>
+                        <Button className='flex hover:cursor-pointer   rounded-full hover:bg-accent text-black border-black bg-white dark:bg-accent-foreground p-0 m-0'>
                            
                            <ArrowUpRight />
                            </Button>

@@ -72,11 +72,11 @@ export const workspaceItems = [
       url: '/innoter/module-offload',
       icon: MapPinCheck,
    },
-   {
-      name: 'Members',
-      url: '/innoter/members',
-      icon: UserRound,
-   },
+   // {
+   //    name: 'Members',
+   //    url: '/innoter/members',
+   //    icon: UserRound,
+   // },
 ];
 
 type accountItems = {

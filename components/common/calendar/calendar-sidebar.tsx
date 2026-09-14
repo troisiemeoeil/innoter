@@ -270,7 +270,7 @@ export function CalendarSidebar({
           </Avatar>
           <div className="flex-1 min-w-0">
             <p className="text-xs font-medium text-foreground truncate">LN</p>
-            <p className="text-xs text-muted-foreground truncate">XYZ Company</p>
+            <p className="text-xs text-muted-foreground truncate">Demo Oy</p>
           </div>
           <Settings className="size-4 text-muted-foreground" />
         </div>

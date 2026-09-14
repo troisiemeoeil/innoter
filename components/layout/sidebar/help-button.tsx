@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Keyboard, Search, Settings } from 'lucide-react';
+import { Info, Keyboard, Search, Settings } from 'lucide-react';
 
 import {
    DropdownMenu,
@@ -21,30 +21,28 @@ export function HelpButton() {
       <DropdownMenu>
          <DropdownMenuTrigger asChild>
             <Button size="icon" variant="outline" className="w-full flex justify-between px-4">
-               <h3>Settings</h3>
-               <Settings className="size-4" />
+               <h3>More Information</h3>
+               <Info className="size-4" />
             </Button>
          </DropdownMenuTrigger>
          <DropdownMenuContent align="end" className="w-57">
-            <div className="p-2">
+            {/* <div className="p-2">
                <div className="relative">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input type="search" placeholder="Search for help..." className="pl-8" />
                </div>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel>More Information</DropdownMenuLabel>
-            <DropdownMenuItem>
+            </div> */}
+            {/* <DropdownMenuSeparator /> */}
+            {/* <DropdownMenuItem>
                <Keyboard className="mr-2 h-4 w-4" />
                <span>Keyboard shortcuts</span>
                <span className="ml-auto text-xs text-muted-foreground">⌘/</span>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             {/* <DropdownMenuSeparator /> */}
 
-            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
                <Link href="https://net.centria.fi/hanke/innoter/" target="_blank">
-                  <RiBox3Fill className="mr-2 h-4 w-4" />
+                 
                   <span>Read on Innoter</span>
                </Link>
             </DropdownMenuItem>

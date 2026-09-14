@@ -34,10 +34,10 @@ export function OrgSwitcher() {
                         className="h-8 p-1 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                      >
                         <div className="flex aspect-square size-6 items-center justify-center rounded bg-orange-500 text-sidebar-primary-foreground">
-                           XY
+                           FI
                         </div>
                         <div className="grid flex-1 text-left text-sm leading-tight">
-                           <span className="truncate font-semibold">XYZ. Corp</span>
+                           <span className="truncate font-semibold">Demo Oy</span>
                         </div>
                         <ChevronsUpDown className="ml-auto" />
                      </SidebarMenuButton>
@@ -68,13 +68,13 @@ export function OrgSwitcher() {
                      <DropdownMenuSubTrigger>Switch Workspace</DropdownMenuSubTrigger>
                      <DropdownMenuPortal>
                         <DropdownMenuSubContent>
-                           <DropdownMenuLabel>xyzcorp@gmail.com</DropdownMenuLabel>
-                           <DropdownMenuSeparator />
+                           {/* <DropdownMenuLabel>demo@demo.com</DropdownMenuLabel>
+                           <DropdownMenuSeparator /> */}
                            <DropdownMenuItem>
                               <div className="flex aspect-square size-6 items-center justify-center rounded bg-orange-500 text-sidebar-primary-foreground">
-                                 XY
+                                 DE
                               </div>
-                              XYZ. Corp
+                              Demo Oy
                            </DropdownMenuItem>
                            <DropdownMenuSeparator />
                            <DropdownMenuItem>Create or join workspace</DropdownMenuItem>
