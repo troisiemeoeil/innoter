@@ -189,10 +189,15 @@ function OffloadAreaForm({ onDone, className }: OffloadAreaFormComponentProps) {
         const areaId = values.areaId?.trim() || generateAreaId()
         const truckId = values.truck?.trim() || generateTruckId()
         const dateLabel = format(values.scheduledDate, "yyyy-MM-dd")
-
+        if (!pendingGeometry) {
+            setError("root", {
+                message: "Draw the area boundary on the map before saving.",
+            })
+            return
+        }
         addArea({
             id: areaId,
-            geometry: pendingGeometry,
+            geometry: pendingGeometry ,
             name: areaId,
             status: values.status,
             truck: values.truck,
