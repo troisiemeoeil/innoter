@@ -72,7 +72,7 @@ export function SchedulePopover({ children }: SchedulePopoverProps) {
                       setDate(selectedDate);
                       setDatePickerOpen(false);
                     }}
-                    initialFocus
+                    
                   />
                 </PopoverContent>
               </Popover>

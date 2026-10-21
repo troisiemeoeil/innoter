@@ -92,7 +92,6 @@ export function CalendarControls() {
                            setDatePickerOpen(false);
                         }
                      }}
-                     initialFocus
                   />
                </PopoverContent>
             </Popover>

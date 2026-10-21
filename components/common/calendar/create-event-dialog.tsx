@@ -116,7 +116,7 @@ export function CreateEventDialog({ open, onOpenChange }: CreateEventDialogProps
                                  setDate(selectedDate);
                                  setDatePickerOpen(false);
                               }}
-                              initialFocus
+                              
                            />
                         </PopoverContent>
                      </Popover>
