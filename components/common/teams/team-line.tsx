@@ -23,7 +23,7 @@ export default function TeamLine({ team }: TeamLineProps) {
          </div>
          <div className="hidden sm:block sm:w-[20%] md:w-[15%] text-xs text-muted-foreground">
             {team.joined && (
-               <Button variant="secondary" size="xxs" className="text-xs">
+               <Button variant="secondary" size="xs" className="text-xs">
                   <Check className="size-4" />
                   Joined
                </Button>
