@@ -13,7 +13,6 @@ interface OffloadingArea {
    name: string;
    status: 'available' | 'occupied' | 'scheduled';
    truck?: string;
-   capacity: number;
    scheduledDrops: ScheduledDrop[];
    notes?: string;
 }

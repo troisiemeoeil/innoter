@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
 
 // Zod schema based matching your object shape
 const logNodeSchema = z.object({
@@ -93,19 +94,21 @@ export function AddLogisticsNodeButton({ onSubmit }: AddLogisticsNodeProps) {
       },
     },
   });
+  const [open, setOpen] = useState(false);
 
-  const handleFormSubmit = (values: LogNodeFormValues) => {
-    // Injecting dummy relationships data dynamically if needed on submission
-    const finalData = {
-      ...values,
-      members: [], // Handle members linkage here if state exists
-      projects: [], // Handle projects linkage here if state exists
-    };
-    onSubmit(finalData);
+ const handleFormSubmit = (values: LogNodeFormValues) => {
+  const finalData = {
+    ...values,
+    members: [],
+    projects: [],
   };
 
+  onSubmit(finalData);
+  setOpen(false);
+};
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="w-2/4" asChild>
         <Button className="gap-2">
           <Plus className="h-4 w-4" /> Add Module

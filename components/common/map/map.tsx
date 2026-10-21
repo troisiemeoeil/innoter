@@ -67,6 +67,8 @@ const MapboxComponent = ({ selectedStore, setSelectedStore }: MapboxComponentPro
     const [zoom] = useState(10);
     const [mapLoaded, setMapLoaded] = useState(false);
     const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
+    const [routeGeometry, setRouteGeometry] =
+  useState<GeoJSON.LineString | null>(null);
     const pathname = usePathname();
     const isDashboard = pathname.endsWith('/dashboard');
     const isOffload = pathname.endsWith("/module-offload");
@@ -224,18 +226,21 @@ const MapboxComponent = ({ selectedStore, setSelectedStore }: MapboxComponentPro
                 if (!data.routes?.length) return;
                 console.log(data);
 
-                const routeGeometry = data.routes[0].geometry;
-                const route = data.routes[0];
-                source.setData({
-                    type: "FeatureCollection",
-                    features: [
-                        {
-                            type: "Feature",
-                            properties: {},
-                            geometry: routeGeometry,
-                        },
-                    ],
-                });
+              const geometry = data.routes[0].geometry;
+const route = data.routes[0];
+
+setRouteGeometry(geometry);
+
+source.setData({
+  type: "FeatureCollection",
+  features: [
+    {
+      type: "Feature",
+      properties: {},
+      geometry,
+    },
+  ],
+});
 
                 setRouteInfo({
                     distanceMeters: route.distance,
@@ -339,75 +344,7 @@ const MapboxComponent = ({ selectedStore, setSelectedStore }: MapboxComponentPro
         }
     }, [isOffload, setupImageSource]);
 
-    // ─── PERSIST IMAGE LAYER ON STYLE CHANGE ───────────────────────────────
-    useEffect(() => {
-        if (!map.current || !isOffload) return;
-
-        const onStyleLoad = () => {
-            // 1. Re-add route source if missing
-            if (!map.current!.getSource(ROUTE_SOURCE_ID)) {
-                map.current!.addSource(ROUTE_SOURCE_ID, {
-                    type: "geojson",
-                    data: { type: "FeatureCollection", features: [] },
-                });
-            }
-
-            // 2. Re-add route layer if missing
-            if (!map.current!.getLayer(ROUTE_LAYER_ID)) {
-                map.current!.addLayer({
-                    id: ROUTE_LAYER_ID,
-                    type: "line",
-                    source: ROUTE_SOURCE_ID,
-                    layout: {
-                        "line-join": "round",
-                        "line-cap": "round",
-                    },
-                    paint: {
-                        "line-color": "#2563EB",
-                        "line-width": 4,
-                        "line-opacity": 0.85,
-                    },
-                });
-            }
-
-            // 3. Re-add image overlay
-            setupImageSource();
-
-            // 4. Re-apply current route data if a store is selected
-            if (selectedStore) {
-                const source = map.current!.getSource(ROUTE_SOURCE_ID) as mapboxgl.GeoJSONSource | undefined;
-                if (source) {
-                    const [modLng, modLat] = selectedStore.geometry.coordinates;
-                    const [siteLng, siteLat] = SITE_COORDS;
-                    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${modLng},${modLat};${siteLng},${siteLat}?geometries=geojson&overview=full&max_height=3.6&max_width=5.9&max_weight=3.5&exclude=ferry%2Cunpaved&access_token=${mapToken.mapbox.accessToken}`;
-
-                    fetch(url)
-                        .then((res) => res.json())
-                        .then((data) => {
-                            if (!data.routes?.length) return;
-                            const routeGeometry = data.routes[0].geometry;
-                            source.setData({
-                                type: "FeatureCollection",
-                                features: [
-                                    {
-                                        type: "Feature",
-                                        properties: {},
-                                        geometry: routeGeometry,
-                                    },
-                                ],
-                            });
-                        })
-                        .catch((err) => console.error("Route re-fetch failed:", err));
-                }
-            }
-        };
-
-        map.current.on('style.load', onStyleLoad);
-
-        return () => {
-            map.current?.off('style.load', onStyleLoad);
-        };
-    }, [isOffload, setupImageSource, selectedStore]);
+    
     // ─── Update image opacity when slider changes ──────────────────────────
     useEffect(() => {
         if (!map.current || !isOffload) return;
@@ -506,81 +443,7 @@ const MapboxComponent = ({ selectedStore, setSelectedStore }: MapboxComponentPro
         <div className="w-full h-full overflow-hidden relative">
             <div id="map" className="h-full w-full text-black " ref={mapContainerRef} />
 
-            {!isDashboard && (
-                <div
-                    id="menu"
-                    className={`absolute  ${isOffload ? "bottom-13 right-2" : "top-2 right-4"} flex gap-1`}
-                >
-                    <div className="flex items-center gap-1">
-                        <Input
-                            id="standard-satellite"
-                            type="radio"
-                            name="rtoggle"
-                            value="satellite"
-                            className="sr-only"
-                            // checked={selectedStyle === "standard-satellite"}
-                            onChange={() => handleStyleChange("standard-satellite")}
-                            defaultChecked
-                        />
-                        <Label
-                            htmlFor="standard-satellite"
-                            className={`cursor-pointer rounded-full  border p-2 transition-colors ${selectedStyle === "standard-satellite"
-
-                                ? "border-foreground bg-foreground text-white"
-                                : "border-background bg-background  text-black"
-
-                                }`}
-                        >
-                            <Satellite size={22} />
-                        </Label>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                        <Input
-                            id="standard"
-                            type="radio"
-                            name="rtoggle"
-                            value="standard"
-                            className="sr-only"
-                            checked={selectedStyle === "standard"}
-                            onChange={() => handleStyleChange("standard")}
-                        // defaultChecked
-                        />
-                        <Label
-                            htmlFor="standard"
-                            className={`cursor-pointer  rounded-full border p-2 transition-colors ${selectedStyle === "standard"
-                                ? "border-foreground bg-foreground text-white"
-                                : "border-background bg-background  text-black"
-
-                                }`}
-                        >
-                            <Map size={22} />
-                        </Label>
-                    </div>
-
-                    <div className="flex items-center gap-1 ">
-                        <Input
-                            id="outdoors-v12"
-                            type="radio"
-                            name="rtoggle"
-                            value="outdoors"
-                            className="sr-only"
-                            checked={selectedStyle === "outdoors-v12"}
-                            onChange={() => handleStyleChange("outdoors-v12")}
-                        />
-                        <Label
-                            htmlFor="outdoors-v12"
-                            className={`cursor-pointer rounded-full border p-2 transition-colors ${selectedStyle === "outdoors-v12"
-                                ? "border-foreground bg-foreground text-white"
-                                : "border-background bg-background  text-black"
-
-                                }`}
-                        >
-                            <Compass size={22} />
-                        </Label>
-                    </div>
-                </div>
-            )}
+          
 
 
             {routeInfo && !isOffload && !isDashboard && selectedStore && (
@@ -615,7 +478,7 @@ const MapboxComponent = ({ selectedStore, setSelectedStore }: MapboxComponentPro
                 <div className="absolute top-2 left-2 flex flex-col gap-2 z-10">
                     <button
                         onClick={() => setImageAdjustMode((v) => !v)}
-                        className={`rounded px-3 py-2 text-sm font-medium border ${imageAdjustMode ? "bg-foreground text-white" : "bg-background text-black"
+                        className={`rounded px-3 py-2 text-sm font-medium border ${imageAdjustMode ? "bg-black text-white" : "bg-white text-black"
                             }`}
                     >
                         {imageAdjustMode ? "Done adjusting" : "Adjust Drone Capture"}

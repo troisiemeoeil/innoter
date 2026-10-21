@@ -79,9 +79,7 @@ const offloadAreaFormSchema = z
             .max(80, "Name must be under 80 characters."),
         status: z.enum(["available", "occupied", "scheduled"]),
         truck: z.string().max(40).optional().or(z.literal("")),
-        capacity: z.coerce
-            .number({ invalid_type_error: "Capacity must be a number." })
-            .positive("Capacity must be greater than 0."),
+    
         scheduledDate: z.date({ required_error: "Pick a date." }),
         startTime: z.string().regex(timePattern, "Provide a start time."),
         endTime: z.string().regex(timePattern, "Provide an end time."),
@@ -98,7 +96,6 @@ const defaultValues: Partial<OffloadAreaFormValues> = {
     areaId: "",
     status: "available",
     truck: "",
-    capacity: undefined,
     scheduledDate: undefined,
     startTime: "",
     endTime: "",
@@ -107,7 +104,11 @@ const defaultValues: Partial<OffloadAreaFormValues> = {
 
 export function OffloadForm() {
     const isDesktop = useMediaQuery("(min-width: 768px)")
-    const { isDrawerOpen, setDrawerOpen, setPendingGeometry } = useUiStore()
+    const { isDrawerOpen, setDrawerOpen } = useUiStore()
+    
+    const setPendingGeometry = useUiStore(
+      (state) => state.setPendingGeometry
+    )
 
     function handleOpenChange(open: boolean) {
         setDrawerOpen(open)
@@ -178,12 +179,12 @@ function OffloadAreaForm({ onDone, className }: OffloadAreaFormComponentProps) {
     }, [setValue])
 
     function onSubmit(values: OffloadAreaFormValues) {
-        if (!pendingGeometry) {
-            setError("root", {
-                message: "Draw the area boundary on the map before saving.",
-            })
-            return
-        }
+        // if (!pendingGeometry) {
+        //     setError("root", {
+        //         message: "Draw the area boundary on the map before saving.",
+        //     })
+        //     return
+        // }
 
         const areaId = values.areaId?.trim() || generateAreaId()
         const truckId = values.truck?.trim() || generateTruckId()
@@ -195,12 +196,11 @@ function OffloadAreaForm({ onDone, className }: OffloadAreaFormComponentProps) {
             name: areaId,
             status: values.status,
             truck: values.truck,
-            capacity: values.capacity,
             scheduledDrops: [
                 {
                     id: generateDropId(),
                     truck: truckId,
-                    time: `${dateLabel} ${values.startTime}–${values.endTime}`,
+                    time: `${dateLabel} ${values.startTime}-${values.endTime}`,
                     notes: values.notes || undefined,
                 },
             ],
@@ -209,6 +209,7 @@ function OffloadAreaForm({ onDone, className }: OffloadAreaFormComponentProps) {
 
         reset({ ...defaultValues, areaId: generateAreaId() })
         setPendingGeometry(null)
+        
         onDone()
     }
 
@@ -289,7 +290,7 @@ function OffloadAreaForm({ onDone, className }: OffloadAreaFormComponentProps) {
                                     selected={field.value}
                                     onSelect={field.onChange}
                                     disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                                    initialFocus
+                                    
                                 />
                             </PopoverContent>
                         </Popover>

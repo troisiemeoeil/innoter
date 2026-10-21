@@ -16,4 +16,5 @@ export const useUiStore = create<UiStore>((set) => ({
     setDrawerOpen: (open) => set({ isDrawerOpen: open }),
     pendingGeometry: null,
     setPendingGeometry: (feature) => set({ pendingGeometry: feature }),
+    
 }))
