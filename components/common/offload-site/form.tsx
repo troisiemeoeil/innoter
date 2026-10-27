@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
-
+import type { Feature, Polygon, GeoJsonProperties } from "geojson"
 import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { Button } from "@/components/ui/button"
@@ -70,6 +70,46 @@ function generateDropId() {
 //   ScheduledDrop on submit (see onSubmit below).
 
 const timePattern = /^\d{2}:\d{2}$/
+
+type PolygonFeature = Feature<Polygon, GeoJsonProperties>
+
+// Accepts either a Feature (what Mapbox Draw emits) or a bare Polygon geometry,
+// and always returns a Feature<Polygon>, or null if it isn't a valid polygon.
+function toPolygonFeature(input: unknown): PolygonFeature | null {
+    if (!input) return null
+
+    const candidate = input as any
+    const geom: Polygon | undefined =
+        candidate.type === "Feature" ? candidate.geometry : candidate
+
+    const ring = geom?.coordinates?.[0]
+    if (geom?.type !== "Polygon" || !Array.isArray(ring) || ring.length < 4) {
+        return null
+    }
+
+    return candidate.type === "Feature"
+        ? (candidate as PolygonFeature)
+        : { type: "Feature", properties: {}, geometry: geom }
+}
+
+// Dev-only placeholder. Replace with coordinates near your map centre.
+const PLACEHOLDER_POLYGON: PolygonFeature = {
+    type: "Feature",
+    properties: {},
+    geometry: {
+        type: "Polygon",
+        coordinates: [
+            [
+                [23.12, 63.84],
+                [23.121, 63.84],
+                [23.121, 63.8405],
+                [23.12, 63.8405],
+                [23.12, 63.84], // closes the ring
+            ],
+        ],
+    },
+}
+
 
 const offloadAreaFormSchema = z
     .object({
@@ -178,7 +218,10 @@ function OffloadAreaForm({ onDone, className }: OffloadAreaFormComponentProps) {
         })
     }, [setValue])
 
+
     function onSubmit(values: OffloadAreaFormValues) {
+
+        const drawn = toPolygonFeature(pendingGeometry)
         // if (!pendingGeometry) {
         //     setError("root", {
         //         message: "Draw the area boundary on the map before saving.",
@@ -189,15 +232,10 @@ function OffloadAreaForm({ onDone, className }: OffloadAreaFormComponentProps) {
         const areaId = values.areaId?.trim() || generateAreaId()
         const truckId = values.truck?.trim() || generateTruckId()
         const dateLabel = format(values.scheduledDate, "yyyy-MM-dd")
-        if (!pendingGeometry) {
-            setError("root", {
-                message: "Draw the area boundary on the map before saving.",
-            })
-            return
-        }
+  
         addArea({
             id: areaId,
-            geometry: pendingGeometry ,
+           geometry: drawn ?? PLACEHOLDER_POLYGON,
             name: areaId,
             status: values.status,
             truck: values.truck,
