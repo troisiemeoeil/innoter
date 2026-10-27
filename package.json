@@ -80,6 +80,7 @@
    "devDependencies": {
       "@eslint/eslintrc": "^3",
       "@tailwindcss/postcss": "^4",
+      "@types/geojson": "^7946.0.16",
       "@types/mapbox__mapbox-gl-draw": "^1.4.9",
       "@types/node": "^20",
       "@types/react": "^19",
